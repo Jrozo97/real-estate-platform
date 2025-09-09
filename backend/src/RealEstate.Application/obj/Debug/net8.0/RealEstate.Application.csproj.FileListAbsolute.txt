@@ -1,0 +1,15 @@
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Application\bin\Debug\net8.0\RealEstate.Application.deps.json
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Application\bin\Debug\net8.0\RealEstate.Application.dll
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Application\bin\Debug\net8.0\RealEstate.Application.pdb
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Application\bin\Debug\net8.0\RealEstate.Domain.dll
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Application\bin\Debug\net8.0\RealEstate.Domain.pdb
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Application\obj\Debug\net8.0\RealEstate.Application.csproj.AssemblyReference.cache
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Application\obj\Debug\net8.0\RealEstate.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Application\obj\Debug\net8.0\RealEstate.Application.AssemblyInfoInputs.cache
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Application\obj\Debug\net8.0\RealEstate.Application.AssemblyInfo.cs
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Application\obj\Debug\net8.0\RealEstate.Application.csproj.CoreCompileInputs.cache
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Application\obj\Debug\net8.0\RealEsta.ABD55878.Up2Date
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Application\obj\Debug\net8.0\RealEstate.Application.dll
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Application\obj\Debug\net8.0\refint\RealEstate.Application.dll
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Application\obj\Debug\net8.0\RealEstate.Application.pdb
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Application\obj\Debug\net8.0\ref\RealEstate.Application.dll

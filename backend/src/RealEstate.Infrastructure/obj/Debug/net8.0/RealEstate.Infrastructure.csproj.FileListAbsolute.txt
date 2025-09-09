@@ -1,0 +1,17 @@
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Infrastructure\bin\Debug\net8.0\RealEstate.Infrastructure.deps.json
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Infrastructure\bin\Debug\net8.0\RealEstate.Infrastructure.dll
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Infrastructure\bin\Debug\net8.0\RealEstate.Infrastructure.pdb
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Infrastructure\bin\Debug\net8.0\RealEstate.Application.dll
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Infrastructure\bin\Debug\net8.0\RealEstate.Domain.dll
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Infrastructure\bin\Debug\net8.0\RealEstate.Domain.pdb
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Infrastructure\bin\Debug\net8.0\RealEstate.Application.pdb
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Infrastructure\obj\Debug\net8.0\RealEstate.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Infrastructure\obj\Debug\net8.0\RealEstate.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Infrastructure\obj\Debug\net8.0\RealEstate.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Infrastructure\obj\Debug\net8.0\RealEstate.Infrastructure.AssemblyInfo.cs
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Infrastructure\obj\Debug\net8.0\RealEstate.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Infrastructure\obj\Debug\net8.0\RealEsta.54FC12BD.Up2Date
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Infrastructure\obj\Debug\net8.0\RealEstate.Infrastructure.dll
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Infrastructure\obj\Debug\net8.0\refint\RealEstate.Infrastructure.dll
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Infrastructure\obj\Debug\net8.0\RealEstate.Infrastructure.pdb
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Infrastructure\obj\Debug\net8.0\ref\RealEstate.Infrastructure.dll
