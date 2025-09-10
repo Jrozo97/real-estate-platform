@@ -9,3 +9,5 @@ C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend
 C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Domain\obj\Debug\net8.0\refint\RealEstate.Domain.dll
 C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Domain\obj\Debug\net8.0\RealEstate.Domain.pdb
 C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Domain\obj\Debug\net8.0\ref\RealEstate.Domain.dll
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Domain\obj\Debug\net8.0\RealEstate.Domain.sourcelink.json
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Domain\obj\Debug\net8.0\RealEstate.Domain.csproj.AssemblyReference.cache

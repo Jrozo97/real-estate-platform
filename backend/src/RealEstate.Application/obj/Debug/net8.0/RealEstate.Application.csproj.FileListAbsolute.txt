@@ -13,3 +13,4 @@ C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend
 C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Application\obj\Debug\net8.0\refint\RealEstate.Application.dll
 C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Application\obj\Debug\net8.0\RealEstate.Application.pdb
 C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Application\obj\Debug\net8.0\ref\RealEstate.Application.dll
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.Application\obj\Debug\net8.0\RealEstate.Application.sourcelink.json

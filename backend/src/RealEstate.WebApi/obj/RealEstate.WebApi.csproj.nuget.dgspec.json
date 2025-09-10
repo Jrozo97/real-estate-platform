@@ -104,6 +104,12 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "MongoDB.Driver": {
+              "target": "Package",
+              "version": "[3.4.3, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -169,6 +175,12 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "MongoDB.Driver": {
+              "target": "Package",
+              "version": "[3.4.3, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -238,6 +250,10 @@
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[8.0.20, )"
+            },
+            "MongoDB.Driver": {
+              "target": "Package",
+              "version": "[3.4.3, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",

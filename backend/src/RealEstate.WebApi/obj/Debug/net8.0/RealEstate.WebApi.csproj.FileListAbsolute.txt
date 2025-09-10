@@ -37,3 +37,10 @@ C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend
 C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.WebApi\obj\Debug\net8.0\RealEstate.WebApi.pdb
 C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.WebApi\obj\Debug\net8.0\RealEstate.WebApi.genruntimeconfig.cache
 C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.WebApi\obj\Debug\net8.0\ref\RealEstate.WebApi.dll
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.WebApi\bin\Debug\net8.0\DnsClient.dll
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.WebApi\bin\Debug\net8.0\MongoDB.Bson.dll
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.WebApi\bin\Debug\net8.0\MongoDB.Driver.dll
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.WebApi\bin\Debug\net8.0\SharpCompress.dll
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.WebApi\bin\Debug\net8.0\Snappier.dll
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.WebApi\bin\Debug\net8.0\ZstdSharp.dll
+C:\Users\Jimmy\Documents\Proyectos personales\prueba-tecnica\real-estate\backend\src\RealEstate.WebApi\obj\Debug\net8.0\RealEstate.WebApi.sourcelink.json
