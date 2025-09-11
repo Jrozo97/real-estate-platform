@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RealEstate.WebApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+86101d84e37e2cae7569cc73b9315933754b199b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5549d82e34178b799551e3d17aed9cc2039181f5")]
 [assembly: System.Reflection.AssemblyProductAttribute("RealEstate.WebApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RealEstate.WebApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
