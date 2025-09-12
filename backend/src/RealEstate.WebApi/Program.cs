@@ -6,6 +6,7 @@ using RealEstate.Application.Abstractions;
 using RealEstate.Application.Dto;
 using RealEstate.Domain.Entities;
 using RealEstate.Infrastructure.Mongo;
+using RealEstate.WebApi.Requests;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +37,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+
 
 // GET /api/properties
 // GET /api/properties (listado)
@@ -112,5 +115,35 @@ app.MapGet("/api/properties/{id}", async (string id, IPropertyRepository repo, C
 .WithName("GetPropertyById")
 .Produces(200)
 .ProducesProblem(404);
+
+// POST /api/properties/search (búsqueda avanzada)
+app.MapPost("/api/properties/search", async (
+    PropertySearchRequest body,
+    IPropertyRepository repo,
+    CancellationToken ct) =>
+{
+    if (body.MinPrice is > 0 && body.MaxPrice is > 0 && body.MinPrice > body.MaxPrice)
+        return Results.Problem(title: "Invalid price range", detail: "minPrice cannot be greater than maxPrice", statusCode: 400);
+
+    var result = await repo.FindAsync(
+        new PropertyFilter(body.Name, body.Address, body.MinPrice, body.MaxPrice, body.Page, body.PageSize, body.Sort), ct
+    );
+
+    var items = result.Items.Select(p => new PropertyDetailDto(
+        p.Id, p.Name, p.Address, p.Price, p.CodeInternal, p.Year,
+        new OwnerDto(p.Owner.Id, p.Owner.Name, p.Owner.Address, p.Owner.Photo, p.Owner.Birthday),
+        p.Images.Select(i => new ImageDto(i.Id, i.File, i.Enabled)).ToList(),
+        p.Traces.Select(t => new TraceDto(t.Id, t.DateSale, t.Name, t.Value, t.Tax)).ToList()
+    ));
+
+    return Results.Ok(new { items, page = result.Page, pageSize = result.PageSize, total = result.Total });
+})
+.WithName("SearchProperties")
+.Produces(200)
+.ProducesProblem(400);
+
+
+
+
 
 app.Run();
