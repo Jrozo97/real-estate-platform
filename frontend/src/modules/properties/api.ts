@@ -3,7 +3,7 @@ import { ListParams, Paginated, Property } from '@/types/properties';
 
 
 export async function fetchProperties(params: ListParams) {
-  const res = await api.get<Paginated<Property>>('/properties', {
+  const res = await api.get<Paginated<Property>>('/api/properties', {
     params: {
       page: params.page,
       pageSize: 12,
@@ -17,6 +17,6 @@ export async function fetchProperties(params: ListParams) {
 }
 
 export async function fetchPropertyById(id: string) {
-  const res = await api.get<Property>(`/properties/${id}`);
+  const res = await api.get<Property>(`/api/properties/${id}`);
   return res.data;
 }

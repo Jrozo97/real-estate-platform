@@ -1,4 +1,5 @@
 // Infrastructure/Mongo/MongoPropertyRepository.cs
+using MongoDB.Bson;
 using MongoDB.Driver;
 using RealEstate.Application.Abstractions;
 using RealEstate.Domain.Entities;
@@ -14,19 +15,20 @@ public sealed class MongoPropertyRepository : IPropertyRepository
 
     public async Task<PagedResult<Property>> FindAsync(PropertyFilter f, CancellationToken ct)
     {
-        var filter = Builders<Property>.Filter.Empty;
+        var builder = Builders<Property>.Filter;
+        var filter = builder.Empty;
 
         if (!string.IsNullOrWhiteSpace(f.Name))
-            filter &= Builders<Property>.Filter.Regex(p => p.Name, new MongoDB.Bson.BsonRegularExpression(f.Name, "i"));
+            filter &= builder.Regex(p => p.Name, new BsonRegularExpression(f.Name, "i"));
 
         if (!string.IsNullOrWhiteSpace(f.Address))
-            filter &= Builders<Property>.Filter.Regex(p => p.Address, new MongoDB.Bson.BsonRegularExpression(f.Address, "i"));
+            filter &= builder.Regex(p => p.Address, new BsonRegularExpression(f.Address, "i"));
 
         if (f.MinPrice is not null)
-            filter &= Builders<Property>.Filter.Gte(p => p.Price, f.MinPrice.Value);
+            filter &= builder.Gte(p => p.Price, (long)f.MinPrice.Value);
 
         if (f.MaxPrice is not null)
-            filter &= Builders<Property>.Filter.Lte(p => p.Price, f.MaxPrice.Value);
+            filter &= builder.Lte(p => p.Price, (long)f.MaxPrice.Value);
 
         var query = _col.Find(filter);
 
@@ -35,12 +37,15 @@ public sealed class MongoPropertyRepository : IPropertyRepository
         {
             var parts = f.Sort.Split(':');
             var field = parts[0].ToLowerInvariant();
-            var dir = parts.Length > 1 && parts[1].Equals("desc", StringComparison.OrdinalIgnoreCase) ? -1 : 1;
+            var desc = parts.Length > 1 && parts[1].Equals("desc", StringComparison.OrdinalIgnoreCase);
+
             var sort = field switch
             {
-                "price" => dir == 1 ? Builders<Property>.Sort.Ascending(p => p.Price) : Builders<Property>.Sort.Descending(p => p.Price),
-                "name"  => dir == 1 ? Builders<Property>.Sort.Ascending(p => p.Name)  : Builders<Property>.Sort.Descending(p => p.Name),
-                _ => Builders<Property>.Sort.Ascending(p => p.Name)
+                "price" => desc ? Builders<Property>.Sort.Descending(p => p.Price)
+                                : Builders<Property>.Sort.Ascending(p => p.Price),
+                "name"  => desc ? Builders<Property>.Sort.Descending(p => p.Name)
+                                : Builders<Property>.Sort.Ascending(p => p.Name),
+                _       => Builders<Property>.Sort.Ascending(p => p.Name)
             };
             query = query.Sort(sort);
         }
@@ -49,17 +54,28 @@ public sealed class MongoPropertyRepository : IPropertyRepository
         var page = Math.Max(f.Page, 1);
         var size = Math.Clamp(f.PageSize, 1, 100);
 
+        // Para listado no necesitamos todo: proyectamos campos básicos + imágenes
         var items = await query
             .Skip((page - 1) * size)
             .Limit(size)
-            .Project(p => new Property // proyección mínima (performance)
+            .Project(p => new Property
             {
+                _id = p._id,
                 Id = p.Id,
-                IdOwner = p.IdOwner,
                 Name = p.Name,
                 Address = p.Address,
                 Price = p.Price,
-                ImageUrl = p.ImageUrl
+                CodeInternal = p.CodeInternal,
+                Year = p.Year,
+                Images = p.Images,     // para que el front pueda tomar la portada (enabled)
+                Owner = new Owner {   // si necesitas mostrar algo del owner en tarjetas
+                    Id = p.Owner.Id,
+                    Name = p.Owner.Name,
+                    Address = p.Owner.Address,
+                    Photo = p.Owner.Photo,
+                    Birthday = p.Owner.Birthday
+                }
+                // traces no las traemos en el listado; llegarán en el detalle
             })
             .ToListAsync(ct);
 
@@ -68,4 +84,46 @@ public sealed class MongoPropertyRepository : IPropertyRepository
 
     public Task<Property?> GetByIdAsync(string id, CancellationToken ct)
         => _col.Find(p => p.Id == id).FirstOrDefaultAsync(ct)!;
+
+    public async Task<PagedResult<Property>> SearchAsync(
+        string? name,
+        string? address,
+        long? minPrice,
+        long? maxPrice,
+        int page,
+        int pageSize)
+    {
+        var builder = Builders<Property>.Filter;
+        var filter = builder.Empty;
+
+        if (!string.IsNullOrWhiteSpace(name))
+            filter &= builder.Regex(p => p.Name, new BsonRegularExpression(name, "i"));
+
+        if (!string.IsNullOrWhiteSpace(address))
+            filter &= builder.Regex(p => p.Address, new BsonRegularExpression(address, "i"));
+
+        if (minPrice is not null)
+            filter &= builder.Gte(p => p.Price, minPrice.Value);
+
+        if (maxPrice is not null)
+            filter &= builder.Lte(p => p.Price, maxPrice.Value);
+
+        var query = _col.Find(filter);
+
+        var total = await query.CountDocumentsAsync();
+        var currentPage = Math.Max(page, 1);
+        var size = Math.Clamp(pageSize, 1, 100);
+
+        var items = await query
+            .Skip((currentPage - 1) * size)
+            .Limit(size)
+            .ToListAsync();
+
+        return new PagedResult<Property>(items, total, currentPage, size);
+    }
+
+    public async Task<Property?> GetByBusinessIdAsync(string businessId)
+    {
+        return await _col.Find(p => p.CodeInternal == businessId).FirstOrDefaultAsync();
+    }
 }

@@ -1,10 +1,13 @@
 export type Property = {
   id: string;       
-  idOwner: string;
   name: string;      
   address: string;   
-  price: number;     
-  imageUrl?: string; 
+  price: number;    
+  codeInternal: string;
+  year: number;
+  owner: Owner;
+  images: Images[];
+  traces: Trace[];
 };
 
 export type Paginated<T> = {
@@ -21,3 +24,27 @@ export type ListParams = {
   minPrice?: number;
   maxPrice?: number;
 };
+
+export type Owner = {
+  id: string;
+  name: string;
+  address: string;
+  photo: string;
+  birthday: string;
+};
+
+export type Images ={
+  id: string;
+  file: string;
+  enabled: boolean | string;
+}
+
+export type Trace ={
+  id: string;
+  name: string;
+  date: string;
+  value: number;
+  tax: number;
+};
+
+

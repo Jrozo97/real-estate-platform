@@ -7,6 +7,7 @@ services:
       MONGO_INITDB_DATABASE: realestate_db
     volumes:
       - mongo_data:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d:ro
   mongo-express:
     image: mongo-express
     ports: ["8081:8081"]

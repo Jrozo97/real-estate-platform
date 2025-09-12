@@ -38,6 +38,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // GET /api/properties
+// GET /api/properties (listado)
 app.MapGet("/api/properties", async (
     IPropertyRepository repo,
     CancellationToken ct,
@@ -52,17 +53,31 @@ app.MapGet("/api/properties", async (
 {
     if (minPrice is > 0 && maxPrice is > 0 && minPrice > maxPrice)
         return Results.Problem(
-    title: "Invalid price range",
-    detail: "minPrice cannot be greater than maxPrice",
-    statusCode: StatusCodes.Status400BadRequest
-);
+            title: "Invalid price range",
+            detail: "minPrice cannot be greater than maxPrice",
+            statusCode: StatusCodes.Status400BadRequest
+        );
 
-    var result = await repo.FindAsync(new PropertyFilter(name, address, minPrice, maxPrice, page, pageSize, sort), ct);
+    var result = await repo.FindAsync(
+        new PropertyFilter(name, address, minPrice, maxPrice, page, pageSize, sort), ct
+    );
 
-    var dto = result.Items.Select(p => new PropertyDto(p.Id, p.IdOwner, p.Name, p.Address, p.Price, p.ImageUrl));
+    // 🔁 Mapeo entidad -> DTO COMPLETO
+    var items = result.Items.Select(p => new PropertyDetailDto(
+        p.Id,
+        p.Name,
+        p.Address,
+        p.Price,
+        p.CodeInternal,
+        p.Year,
+        new OwnerDto(p.Owner.Id, p.Owner.Name, p.Owner.Address, p.Owner.Photo, p.Owner.Birthday),
+        p.Images.Select(i => new ImageDto(i.Id, i.File, i.Enabled)).ToList(),
+        p.Traces.Select(t => new TraceDto(t.Id, t.DateSale, t.Name, t.Value, t.Tax)).ToList()
+    ));
+
     return Results.Ok(new
     {
-        items = dto,
+        items,
         page = result.Page,
         pageSize = result.PageSize,
         total = result.Total
@@ -72,23 +87,27 @@ app.MapGet("/api/properties", async (
 .Produces(200)
 .ProducesProblem(400);
 
-// GET /api/properties/{id}
+// GET /api/properties/{id} (detalle)
 app.MapGet("/api/properties/{id}", async (string id, IPropertyRepository repo, CancellationToken ct) =>
 {
     var p = await repo.GetByIdAsync(id, ct);
-    return p is null 
-    ? Results.Problem(
-        title: "Not Found", 
-        statusCode: StatusCodes.Status404NotFound
-      )
-    : Results.Ok(new PropertyDto(
-        p.Id, 
-        p.IdOwner, 
-        p.Name, 
-        p.Address, 
-        p.Price, 
-        p.ImageUrl
-      ));
+    if (p is null)
+        return Results.Problem(title: "Not Found", statusCode: StatusCodes.Status404NotFound);
+
+    // Mapeo entidad -> DTO de detalle
+    var dto = new PropertyDetailDto(
+        p.Id,
+        p.Name,
+        p.Address,
+        p.Price,
+        p.CodeInternal,
+        p.Year,
+        new OwnerDto(p.Owner.Id, p.Owner.Name, p.Owner.Address, p.Owner.Photo, p.Owner.Birthday),
+        p.Images.Select(i => new ImageDto(i.Id, i.File, i.Enabled)).ToList(),
+        p.Traces.Select(t => new TraceDto(t.Id, t.DateSale, t.Name, t.Value, t.Tax)).ToList()
+    );
+
+    return Results.Ok(dto);
 })
 .WithName("GetPropertyById")
 .Produces(200)
