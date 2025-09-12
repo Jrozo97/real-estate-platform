@@ -3,15 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import QueryClientProviderWrapper from "./query-client-provider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -25,10 +16,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
+
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`antialiased`}
       >
-        <QueryClientProviderWrapper>{children}</QueryClientProviderWrapper>
+        <QueryClientProviderWrapper>
+          <main>
+            {children}
+          </main>
+        </QueryClientProviderWrapper>
       </body>
     </html>
   );
