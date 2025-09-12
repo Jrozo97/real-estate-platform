@@ -7,7 +7,7 @@ import Link from 'next/link';
 export default function PropertyCard({ p }: { p: Property }) {
 
   // del listado de imagenes, elegir la primera que este habilitada
-  const mainImage = p.images.find(img => img.enabled === true || img.enabled === 'true');
+  const mainImage = p.images.find(img => img.enabled === true);
   return (
     <Link
       href={`/properties/${p.id}`}

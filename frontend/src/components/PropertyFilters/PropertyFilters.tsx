@@ -7,38 +7,19 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Funnel } from 'lucide-react';
 // Tipos de datos
 export type PropertyFiltersValues = {
-  name: string;
   address: string;
-  price: [number, number]; // [min, max]
+  price: [number, number] | undefined; // [min, max]
 };
 
 type Props = {
-  /** Precio mínimo absoluto disponible en el dataset */
   minPrice?: number;
-  /** Precio máximo absoluto disponible en el dataset */
   maxPrice?: number;
-  /** Paso del slider (por defecto 50.000) */
   step?: number;
-  /** Valores iniciales del filtro */
   defaultValues?: Partial<PropertyFiltersValues>;
-  /** Callback (debounced) cuando cambian los filtros */
-  onChange?: (values: PropertyFiltersValues) => void;
-  /** Callback explícito al pulsar "Aplicar" */
-  onApply?: (values: PropertyFiltersValues) => void;
-  /** ms para el debounce de inputs de texto */
-  debounceMs?: number;
+  onApply?: (values: PropertyFiltersValues) => void; // ← sólo aplicamos manualmente
   className?: string;
 };
 
-// Hook simple de debounce
-function useDebounced<T>(value: T, delay: number) {
-  const [debouncedValue, setDebouncedValue] = React.useState(value);
-  React.useEffect(() => {
-    const id = setTimeout(() => setDebouncedValue(value), delay);
-    return () => clearTimeout(id);
-  }, [value, delay]);
-  return debouncedValue;
-}
 
 const currency = new Intl.NumberFormat("es-CO", {
   style: "currency",
@@ -48,42 +29,30 @@ const currency = new Intl.NumberFormat("es-CO", {
 
 export default function PropertyFilters({
   minPrice = 0,
-  maxPrice = 100_000_000,
+  maxPrice = 300_000_000,
   step = 50_000,
   defaultValues,
-  onChange,
   onApply,
-  debounceMs = 300,
   className,
 }: Props) {
-  const [name, setName] = React.useState(defaultValues?.name ?? "");
   const [address, setAddress] = React.useState(defaultValues?.address ?? "");
-  const [price, setPrice] = React.useState<[number, number]>([
-    defaultValues?.price?.[0] ?? minPrice,
-    defaultValues?.price?.[1] ?? maxPrice,
-  ]);
 
-  // Valores debounced para inputs de texto
-  const debouncedName = useDebounced(name, debounceMs);
-  const debouncedAddress = useDebounced(address, debounceMs);
-
-  // Emitimos cambios (debounced) cuando cambien los campos
-  React.useEffect(() => {
-    onChange?.({ name: debouncedName, address: debouncedAddress, price });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedName, debouncedAddress, price]);
+  const [price, setPrice] = React.useState<[number, number] | undefined>(() => {
+    if (!defaultValues?.price) return undefined;
+    const [min, max] = defaultValues.price;
+    return [Math.max(minPrice, Math.min(min, max)), Math.max(min, Math.min(max, 9999999999))];
+  });
 
   function resetFilters() {
-    setName("");
-    setAddress("");
+    const clean = { address: "", price: undefined as [number, number] | undefined };
+    setAddress(clean.address);
     setPrice([minPrice, maxPrice]);
-    onChange?.({ name: "", address: "", price: [minPrice, maxPrice] });
+    onApply?.(clean);
   }
 
   function handleApply() {
-    onApply?.({ name, address, price });
+    onApply?.({ address, price: price ?? [minPrice, maxPrice] });
   }
-
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -91,20 +60,9 @@ export default function PropertyFilters({
       </PopoverTrigger>
 
       <PopoverContent
-        className={`grid gap-4 rounded-2xl border p-4 shadow-sm ${
-          className ?? ""
-        }`}
+        className={`grid gap-4 rounded-2xl border p-4 shadow-sm ${className ?? ""
+          }`}
       >
-        <div className="grid gap-2">
-          <Label htmlFor="name">Nombre</Label>
-          <Input
-            id="name"
-            placeholder="Buscar por nombre..."
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
-
         <div className="grid gap-2">
           <Label htmlFor="address">Dirección</Label>
           <Input
@@ -119,49 +77,48 @@ export default function PropertyFilters({
           <div className="flex items-center justify-between">
             <Label>Rango de precio</Label>
             <span className="text-sm text-muted-foreground text-right">
-              {currency.format(price[0])} — {currency.format(price[1])}
+              {currency.format(price ? price[0] : minPrice)} — {currency.format(price ? price[1] : maxPrice)}
             </span>
           </div>
 
           <Slider
-            value={[price[0], price[1]]}
-            onValueChange={(val) => {
-              // Radix Slider entrega number[]
-              const [min, max] = val as number[];
-              setPrice([min, max]);
-            }}
+            value={price}
+            onValueChange={(val) => setPrice([val[0], val[1]])}
             min={minPrice}
-            max={maxPrice}
+            max={9999999999}
             step={step}
-            minStepsBetweenThumbs={Math.max(
-              1,
-              Math.floor(step / Math.max(1, step))
-            )}
+            minStepsBetweenThumbs={1}
           />
 
           <div className="flex items-center gap-3">
             <Input
               type="number"
-              value={price[0]}
+              value={price ? price[0] : minPrice}
               onChange={(e) => {
                 const val = Number(e.target.value || 0);
-                setPrice(([_, max]) => [
-                  Math.min(Math.max(minPrice, val), max),
-                  max,
-                ]);
+                setPrice((prev) => {
+                  const [_, max] = prev ?? [minPrice, maxPrice];
+                  return [
+                    Math.min(Math.max(minPrice, val), max),
+                    max,
+                  ];
+                });
               }}
               aria-label="Precio mínimo"
             />
             <span className="text-muted-foreground">a</span>
             <Input
               type="number"
-              value={price[1]}
+              value={price ? price[1] : maxPrice}
               onChange={(e) => {
                 const val = Number(e.target.value || 0);
-                setPrice(([min, _]) => [
-                  min,
-                  Math.max(Math.min(maxPrice, val), min),
-                ]);
+                setPrice((prev) => {
+                  const [min] = prev ?? [minPrice, maxPrice];
+                  return [
+                    min,
+                    Math.max(Math.min(maxPrice, val), min),
+                  ];
+                });
               }}
               aria-label="Precio máximo"
             />

@@ -2,14 +2,16 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { qk } from '@/lib/queryKeys';
-import { fetchProperties, fetchPropertyById } from './api';
+import { fetchPropertiesGet, fetchPropertiesPost, fetchPropertyById } from './api';
 import type { ListParams } from '@/types/properties';
 
-export function useProperties(params: ListParams) {
+
+export function useProperties(params: ListParams, mode: 'get' | 'post' = 'post') {
   return useQuery({
-    queryKey: qk.properties.list(params),
-    queryFn: () => fetchProperties(params),
-    // Mantén la página previa visible mientras carga la nueva
+    queryKey: qk.properties.list({ ...params, mode }),  
+    queryFn: () => mode === 'get'
+      ? fetchPropertiesGet(params)
+      : fetchPropertiesPost(params),
     placeholderData: (prev) => prev,
     select: (data) => ({
       ...data,

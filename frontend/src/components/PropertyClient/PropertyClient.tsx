@@ -15,31 +15,38 @@ import {
   PaginationPrevious,
 } from "../ui/pagination";
 
+type UrlParams = {
+  page: number;
+  name?: string;
+  address?: string;
+  minPrice?: number;
+  maxPrice?: number;
+};
+
 export default function PropertyClient() {
   const router = useRouter();
   const [page, setPage] = useState(1);
-  const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
-  const [minPrice, setMinPrice] = useState<number | undefined>(undefined);
-  const [maxPrice, setMaxPrice] = useState<number | undefined>(undefined);
-  const [internalPage, setInternalPage] = useState(1);
-
-  const isControlled = page !== undefined;
+  const [filters, setFilters] = useState<{ name?: string; address?: string; minPrice?: number; maxPrice?: number }>({
+    name: "",
+    address: "",
+    minPrice: undefined,
+    maxPrice: undefined,
+  });
 
   const params = useMemo(
-    () => ({ page, name, address, minPrice, maxPrice }),
-    [page, name, address, minPrice, maxPrice]
+    () => ({ page, name: filters.name, address: filters.address, minPrice: filters.minPrice, maxPrice: filters.maxPrice }),
+    [page, filters]
   );
 
-  const { data, isFetching } = useProperties(params);
-  const pageSize = data?.pageSize ?? 10;
+  const { data, isFetching } = useProperties(params, "get");
+  const pageSize = data?.pageSize ?? 12;
   const totalPages = Math.max(1, Math.ceil((data?.total ?? 0) / pageSize));
 
   useEffect(() => {
-    if (!isControlled && internalPage > totalPages) {
-      setInternalPage(totalPages);
-    }
-  }, [totalPages, internalPage, isControlled]);
+    if (page > totalPages) setPage(totalPages);
+  }, [totalPages, page]);
+
+
 
   const pushURL = (next: typeof params) => {
     const sp = new URLSearchParams();
@@ -48,27 +55,26 @@ export default function PropertyClient() {
     if (next.address) sp.set("address", next.address);
     if (typeof next.minPrice === "number") sp.set("min", String(next.minPrice));
     if (typeof next.maxPrice === "number") sp.set("max", String(next.maxPrice));
-    router.replace(`/properties?${sp.toString()}`);
+
   };
 
-  const onFiltersChange = (f: {
-    name: string;
-    address: string;
-    minPrice?: number;
-    maxPrice?: number;
-  }) => {
+  const onFiltersChange = (f: { name?: string; address?: string; minPrice?: number; maxPrice?: number }) => {
+    const merged = { ...filters, ...f };
+    if (!merged.name) delete merged.name;
+    if (!merged.address) delete merged.address;
+    if (typeof merged.minPrice !== "number") delete merged.minPrice;
+    if (typeof merged.maxPrice !== "number") delete merged.maxPrice;
+
     setPage(1);
-    setName(f.name);
-    setAddress(f.address);
-    setMinPrice(f.minPrice);
-    setMaxPrice(f.maxPrice);
+    setFilters(merged);
     pushURL({
       page: 1,
-      name: f.name,
-      address: f.address,
-      minPrice: f.minPrice,
-      maxPrice: f.maxPrice,
+      name: merged.name ?? undefined,
+      address: merged.address ?? undefined,
+      minPrice: merged.minPrice ?? undefined,
+      maxPrice: merged.maxPrice ?? undefined,
     });
+    console.log("[PropertyClient] set filters", merged);
   };
 
   const prev = () => {
@@ -88,11 +94,14 @@ export default function PropertyClient() {
 
   const pagesToRender = getPageItems(page, totalPages);
 
+  // necesito saber cual es la propiedad mas cara y la mas barata con la data que tengo o me trae el backend
+  // para el slider de precios
+
   return (
     <div className="mx-auto max-w-6xl p-4 md:p-6 space-y-5">
       <h1 className="text-2xl font-bold">Propiedades</h1>
 
-      <SearchFilters />
+      <SearchFilters onChange={onFiltersChange} />
 
       {/* Grid responsivo */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -112,9 +121,8 @@ export default function PropertyClient() {
                   e.preventDefault();
                   prev();
                 }}
-                className={`text-xs py-1.5 ${
-                  page === 1 && "pointer-events-none opacity-50"
-                }`}
+                className={`text-xs py-1.5 ${page === 1 && "pointer-events-none opacity-50"
+                  }`}
                 aria-disabled={page === 1}
                 aria-label="Anterior"
                 textButton="Anterior"
@@ -134,10 +142,9 @@ export default function PropertyClient() {
                       e.preventDefault();
                       goTo(p);
                     }}
-                    className={`text-xs size-auto py-1 px-2 ${
-                      p === page &&
+                    className={`text-xs size-auto py-1 px-2 ${p === page &&
                       "size-auto py-1 px-2 rounded-[4px] bg-[#F9F9F9] border-[0.5px] border-slate-300"
-                    }`}
+                      }`}
                   >
                     {p}
                   </PaginationLink>
@@ -152,9 +159,8 @@ export default function PropertyClient() {
                   next();
                 }}
                 aria-disabled={page === totalPages}
-                className={`text-xs py-1.5 ${
-                  page === totalPages && "pointer-events-none opacity-50"
-                }`}
+                className={`text-xs py-1.5 ${page === totalPages && "pointer-events-none opacity-50"
+                  }`}
                 aria-label="Siguiente"
                 textButton="Siguiente"
               />

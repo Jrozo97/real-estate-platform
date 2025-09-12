@@ -19,10 +19,12 @@ export type Paginated<T> = {
 
 export type ListParams = {
   page: number;
+  pageSize?: number;
   name?: string;
   address?: string;
   minPrice?: number;
   maxPrice?: number;
+  sort?: string; // e.g., "price:asc" or "price:desc"
 };
 
 export type Owner = {
@@ -35,16 +37,15 @@ export type Owner = {
 
 export type Images ={
   id: string;
-  file: string;
-  enabled: boolean | string;
+  file: string; 
+  enabled: boolean;
 }
 
-export type Trace ={
+export type Trace = {
   id: string;
   name: string;
-  date: string;
+  dateSale: string;   // ← era "date"
   value: number;
   tax: number;
 };
-
 

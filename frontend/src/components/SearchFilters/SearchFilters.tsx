@@ -1,17 +1,48 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import PropertyFilters, {
   PropertyFiltersValues,
 } from "../PropertyFilters/PropertyFilters";
+import { useDebounce } from "@/hooks/useDebounce";
 
-const SearchFilters = () => {
+type Props = {
+  onChange: (f: {
+    name?: string;
+    address?: string;
+    minPrice?: number | undefined;
+    maxPrice?: number | undefined;
+  }) => void;
+};
+
+const SearchFilters = ({ onChange }: Props) => {
+  const [name, setName] = useState("");
   const [filters, setFilters] = useState<PropertyFiltersValues>({
-    name: "",
     address: "",
     price: [0, 100_000_000],
   });
+
+  const debouncedName = useDebounce(name, 300);
+
+  useEffect(() => {
+    onChange?.({ name: debouncedName });
+  }, [debouncedName]);
+
+  const handlePopoverApply = (v: PropertyFiltersValues) => {
+    setFilters(v);
+    const [min, max] = v.price || [undefined, undefined];
+    onChange({
+      address: v.address || undefined,
+      minPrice: v.price ? v.price[0] : undefined,
+      maxPrice: v.price ? v.price[1] : undefined,
+    });
+    console.log("[SearchFilters] apply -> parent onChange", {
+      address: v.address,
+      min,
+      max,
+    });
+  };
 
   return (
     <div className="flex w-full gap-8">
@@ -25,16 +56,18 @@ const SearchFilters = () => {
                focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
                text-blue-950 placeholder-slate-400 transition-all"
           type="text"
+          value={name}
+          aria-label="Buscar propiedad por nombre"
+          onChange={(e) => setName(e.target.value)}
         />
       </div>
 
       <PropertyFilters
         minPrice={0}
-        maxPrice={500_000_000}
-        step={50_000}
+        maxPrice={300_000_000}
+        step={1_000_000}
         defaultValues={filters}
-        onChange={(v) => setFilters(v)}
-        // onApply={(v) => fetchProperties(v)}
+        onApply={handlePopoverApply}
       />
     </div>
   );
