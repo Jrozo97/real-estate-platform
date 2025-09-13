@@ -1,7 +1,6 @@
 "use client";
 
 import { useProperties } from "@/modules/properties/hooks";
-import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import SearchFilters from "../SearchFilters/SearchFilters";
 import PropertyCard from "../PropertyCard/PropertyCard";
@@ -14,17 +13,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../ui/pagination";
-
-type UrlParams = {
-  page: number;
-  name?: string;
-  address?: string;
-  minPrice?: number;
-  maxPrice?: number;
-};
+import EmptyState from "@/modules/properties/components/EmptyState/EmptyState";
+import { PropertyCardSkeleton } from "@/modules/properties/components/PropertyCardSkeleton/PropertyCardSkeleton";
 
 export default function PropertyClient() {
-  const router = useRouter();
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState<{ name?: string; address?: string; minPrice?: number; maxPrice?: number }>({
     name: "",
@@ -74,7 +66,6 @@ export default function PropertyClient() {
       minPrice: merged.minPrice ?? undefined,
       maxPrice: merged.maxPrice ?? undefined,
     });
-    console.log("[PropertyClient] set filters", merged);
   };
 
   const prev = () => {
@@ -93,9 +84,7 @@ export default function PropertyClient() {
   };
 
   const pagesToRender = getPageItems(page, totalPages);
-
-  // necesito saber cual es la propiedad mas cara y la mas barata con la data que tengo o me trae el backend
-  // para el slider de precios
+  const isLoadingGrid = isFetching;
 
   return (
     <div className="mx-auto max-w-6xl p-4 md:p-6 space-y-5">
@@ -103,12 +92,39 @@ export default function PropertyClient() {
 
       <SearchFilters onChange={onFiltersChange} />
 
+      {isLoadingGrid && (
+        <div className="flex items-center gap-2 text-sm text-slate-600">
+          <svg className="size-4 animate-spin" viewBox="0 0 24 24" fill="none">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v3A5 5 0 009 12H4z" />
+          </svg>
+          Cargando resultados…
+        </div>
+      )}
+
       {/* Grid responsivo */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {data?.items.map((p) => (
-          <PropertyCard key={p.id} p={p} />
-        ))}
-      </div>
+
+      {!isFetching && (data?.items?.length ?? 0) === 0 ? (
+        <EmptyState
+          onReset={() => {
+            setFilters({ name: "", address: "", minPrice: undefined, maxPrice: undefined });
+            setPage(1);
+            // pushURL si lo usas para sincronizar querystring
+            // pushURL({ page: 1, name: undefined, address: undefined, minPrice: undefined, maxPrice: undefined });
+          }}
+        />
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {(isFetching && (!data?.items || data.items.length === 0))
+            ? Array.from({ length: data?.pageSize ?? 12 }).map((_, i) => (
+              <PropertyCardSkeleton key={`s-${i}`} />
+            ))
+            : data?.items.map((p) => <PropertyCard key={p.id} p={p} />)}
+        </div>
+      )
+      }
+
+
 
       {/* Paginación */}
       <div className="flex items-center justify-between px-4 py-3 text-sm text-slate-600">
