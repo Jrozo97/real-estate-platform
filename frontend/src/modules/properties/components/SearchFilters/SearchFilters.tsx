@@ -6,6 +6,7 @@ import PropertyFilters, {
   PropertyFiltersValues,
 } from "../PropertyFilters/PropertyFilters";
 import { useDebounce } from "@/hooks/useDebounce";
+import { Search } from "lucide-react";
 
 type Props = {
   onChange: (f: {
@@ -48,7 +49,7 @@ const SearchFilters = ({ onChange }: Props) => {
     <div className="flex w-full  md:flex-row md:gap-8 gap-3 flex-col">
       <div className="w-full relative">
         <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 text-xl">
-          🔍
+          <Search className="text-blue-900"/>
         </span>
         <Input
           placeholder="Busca tu propiedad..."

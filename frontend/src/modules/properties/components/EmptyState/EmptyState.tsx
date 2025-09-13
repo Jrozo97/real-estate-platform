@@ -1,4 +1,3 @@
-
 "use client";
 
 import { SearchX } from "lucide-react";
@@ -16,6 +15,7 @@ export default function EmptyState({
 }: Props) {
   return (
     <div
+      data-testid="empty-state"
       role="status"
       aria-live="polite"
       className="flex flex-col items-center justify-center text-center gap-3 rounded-2xl border border-dashed p-10 bg-white"

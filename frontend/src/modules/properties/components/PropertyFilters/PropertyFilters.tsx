@@ -3,8 +3,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "../../../../components/ui/popover";
-import { Funnel } from 'lucide-react';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "../../../../components/ui/popover";
+import { Funnel } from "lucide-react";
 import { currency } from "@/lib/utils";
 // Tipos de datos
 export type PropertyFiltersValues = {
@@ -21,9 +25,6 @@ type Props = {
   className?: string;
 };
 
-
-
-
 export default function PropertyFilters({
   minPrice = 0,
   maxPrice = 300_000_000,
@@ -34,26 +35,35 @@ export default function PropertyFilters({
 }: Props) {
   const [address, setAddress] = React.useState(defaultValues?.address ?? "");
 
-  const [price, setPrice] = React.useState<[number, number] | undefined>(() => {
-    if (!defaultValues?.price) return undefined;
-    const [min, max] = defaultValues.price;
-    return [Math.max(minPrice, Math.min(min, max)), Math.max(min, Math.min(max, 9999999999))];
-  });
+  const [price, setPrice] = React.useState<[number, number] | undefined>();
 
   function resetFilters() {
-    const clean = { address: "", price: undefined as [number, number] | undefined };
+    const clean = {
+      address: "",
+      price: undefined as [number, number] | undefined,
+    };
     setAddress(clean.address);
-    setPrice([minPrice, maxPrice]);
+    setPrice(undefined);
     onApply?.(clean);
   }
 
   function handleApply() {
-    onApply?.({ address, price: price ?? [minPrice, maxPrice] });
+    // 👇 sólo mandamos price si existe, si no queda undefined
+    onApply?.({
+      address,
+      price:
+        price && !(price[0] === minPrice && price[1] === maxPrice)
+          ? price
+          : undefined,
+    });
   }
+
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline">Filtros <Funnel /> </Button>
+        <Button variant="outline" data-testid="filters-open">
+          Filtros <Funnel />{" "}
+        </Button>
       </PopoverTrigger>
 
       <PopoverContent
@@ -67,6 +77,7 @@ export default function PropertyFilters({
             placeholder="Buscar por dirección..."
             value={address}
             onChange={(e) => setAddress(e.target.value)}
+            data-testid="filters-address"
           />
         </div>
 
@@ -74,12 +85,13 @@ export default function PropertyFilters({
           <div className="flex items-center justify-between">
             <Label>Rango de precio</Label>
             <span className="text-sm text-muted-foreground text-right">
-              {currency.format(price ? price[0] : minPrice)} — {currency.format(price ? price[1] : maxPrice)}
+              {currency.format(price ? price[0] : minPrice)} —{" "}
+              {currency.format(price ? price[1] : maxPrice)}
             </span>
           </div>
 
           <Slider
-            value={price}
+            value={price ?? [minPrice, maxPrice]}
             onValueChange={(val) => setPrice([val[0], val[1]])}
             min={minPrice}
             max={9999999999}
@@ -90,69 +102,53 @@ export default function PropertyFilters({
           <div className="flex items-center gap-3">
             <Input
               type="number"
-              value={price ? price[0] : minPrice}
+              value={price ? price[0] : ""}
+              placeholder={minPrice.toString()}
               onChange={(e) => {
                 const val = Number(e.target.value || 0);
                 setPrice((prev) => {
                   const [_, max] = prev ?? [minPrice, maxPrice];
-                  return [
-                    Math.min(Math.max(minPrice, val), max),
-                    max,
-                  ];
+                  return [Math.min(Math.max(minPrice, val), max), max];
                 });
               }}
               aria-label="Precio mínimo"
+              data-testid="filters-price-min"
             />
             <span className="text-muted-foreground">a</span>
             <Input
               type="number"
-              value={price ? price[1] : maxPrice}
+              value={price ? price[1] : ""}
+              placeholder={maxPrice.toString()}
               onChange={(e) => {
-                const val = Number(e.target.value || 0);
-                setPrice((prev) => {
-                  const [min] = prev ?? [minPrice, maxPrice];
-                  return [
-                    min,
-                    Math.max(Math.min(maxPrice, val), min),
-                  ];
-                });
+                const val = Number(e.target.value);
+                if (isNaN(val)) {
+                  setPrice(undefined);
+                } else {
+                  setPrice((prev) => {
+                    const [min] = prev ?? [minPrice, maxPrice];
+                    return [min, val];  
+                  });
+                }
               }}
               aria-label="Precio máximo"
+              data-testid="filters-price-max"
             />
           </div>
         </div>
 
         <div className="flex justify-end gap-3 pt-2">
-          <Button variant="ghost" onClick={resetFilters}>
+          <Button
+            variant="ghost"
+            onClick={resetFilters}
+            data-testid="filters-clear"
+          >
             Limpiar
           </Button>
-          <Button onClick={handleApply}>Aplicar</Button>
+          <Button onClick={handleApply} data-testid="filters-apply">
+            Aplicar
+          </Button>
         </div>
       </PopoverContent>
     </Popover>
   );
 }
-
-/**
- * Ejemplo de uso:
- *
- * const [filters, setFilters] = React.useState<PropertyFiltersValues>({
- *   name: "",
- *   address: "",
- *   price: [0, 100_000_000],
- * });
- *
- * <PropertyFilters
- *   minPrice={0}
- *   maxPrice={500_000_000}
- *   step={50_000}
- *   defaultValues={filters}
- *   onChange={(v) => setFilters(v)}
- *   onApply={(v) => fetchProperties(v)}
- * />
- *
- * // En tu lista, filtras por:
- * // - nombre incluye (case-insensitive)
- * // - dirección incluye
- * // - total >= price[0] && total <= price[1]
- */

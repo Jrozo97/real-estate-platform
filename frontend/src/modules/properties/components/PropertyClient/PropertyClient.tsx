@@ -18,7 +18,12 @@ import PropertyCardSkeleton from "../PropertyCardSkeleton";
 
 export default function PropertyClient() {
   const [page, setPage] = useState(1);
-  const [filters, setFilters] = useState<{ name?: string; address?: string; minPrice?: number; maxPrice?: number }>({
+  const [filters, setFilters] = useState<{
+    name?: string;
+    address?: string;
+    minPrice?: number;
+    maxPrice?: number;
+  }>({
     name: "",
     address: "",
     minPrice: undefined,
@@ -26,7 +31,13 @@ export default function PropertyClient() {
   });
 
   const params = useMemo(
-    () => ({ page, name: filters.name, address: filters.address, minPrice: filters.minPrice, maxPrice: filters.maxPrice }),
+    () => ({
+      page,
+      name: filters.name,
+      address: filters.address,
+      minPrice: filters.minPrice,
+      maxPrice: filters.maxPrice,
+    }),
     [page, filters]
   );
 
@@ -38,8 +49,12 @@ export default function PropertyClient() {
     if (page > totalPages) setPage(totalPages);
   }, [totalPages, page]);
 
-
-  const onFiltersChange = (f: { name?: string; address?: string; minPrice?: number; maxPrice?: number }) => {
+  const onFiltersChange = (f: {
+    name?: string;
+    address?: string;
+    minPrice?: number;
+    maxPrice?: number;
+  }) => {
     const merged = { ...filters, ...f };
     if (!merged.name) delete merged.name;
     if (!merged.address) delete merged.address;
@@ -77,8 +92,19 @@ export default function PropertyClient() {
       {isLoadingGrid && (
         <div className="flex items-center gap-2 text-sm text-slate-600">
           <svg className="size-4 animate-spin" viewBox="0 0 24 24" fill="none">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v3A5 5 0 009 12H4z" />
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="3"
+            />
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v3A5 5 0 009 12H4z"
+            />
           </svg>
           Cargando resultados…
         </div>
@@ -86,25 +112,42 @@ export default function PropertyClient() {
 
       {/* Grid responsivo */}
 
-      {!isFetching && (data?.items?.length ?? 0) === 0 ? (
-        <EmptyState
-          onReset={() => {
-            setFilters({ name: "", address: "", minPrice: undefined, maxPrice: undefined });
-            setPage(1);
-          }}
-        />
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {(isFetching && (!data?.items || data.items.length === 0))
-            ? Array.from({ length: data?.pageSize ?? 12 }).map((_, i) => (
-              <PropertyCardSkeleton key={`s-${i}`} />
-            ))
-            : data?.items.map((p) => <PropertyCard key={p.id} p={p} />)}
-        </div>
-      )
-      }
+      <div
+        data-testid="properties-grid"
+        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+      >
+        {isFetching &&
+          (!data?.items || data.items.length === 0) &&
+          Array.from({ length: data?.pageSize ?? 12 }).map((_, i) => (
+            <PropertyCardSkeleton
+              data-testid="property-skeleton"
+              key={`s-${i}`}
+            />
+          ))}
 
+        {!isFetching &&
+          (data?.items?.length ?? 0) > 0 &&
+          data!.items.map((p) => (
+            <PropertyCard key={p.id} p={p} data-testid="property-card" />
+          ))}
 
+        {!isFetching && (data?.items?.length ?? 0) === 0 && (
+          <div className="col-span-full">
+            <EmptyState
+              data-testid="empty-state"
+              onReset={() => {
+                setFilters({
+                  name: "",
+                  address: "",
+                  minPrice: undefined,
+                  maxPrice: undefined,
+                });
+                setPage(1);
+              }}
+            />
+          </div>
+        )}
+      </div>
 
       {/* Paginación */}
       <div className="flex items-center justify-between px-4 py-3 text-sm text-slate-600">
@@ -117,8 +160,9 @@ export default function PropertyClient() {
                   e.preventDefault();
                   prev();
                 }}
-                className={`text-xs py-1.5 ${page === 1 && "pointer-events-none opacity-50"
-                  }`}
+                className={`text-xs py-1.5 ${
+                  page === 1 && "pointer-events-none opacity-50"
+                }`}
                 aria-disabled={page === 1}
                 aria-label="Anterior"
                 textButton="Anterior"
@@ -138,9 +182,10 @@ export default function PropertyClient() {
                       e.preventDefault();
                       goTo(p);
                     }}
-                    className={`text-xs size-auto py-1 px-2 ${p === page &&
+                    className={`text-xs size-auto py-1 px-2 ${
+                      p === page &&
                       "size-auto py-1 px-2 rounded-[4px] bg-[#F9F9F9] border-[0.5px] border-slate-300"
-                      }`}
+                    }`}
                   >
                     {p}
                   </PaginationLink>
@@ -155,8 +200,9 @@ export default function PropertyClient() {
                   next();
                 }}
                 aria-disabled={page === totalPages}
-                className={`text-xs py-1.5 ${page === totalPages && "pointer-events-none opacity-50"
-                  }`}
+                className={`text-xs py-1.5 ${
+                  page === totalPages && "pointer-events-none opacity-50"
+                }`}
                 aria-label="Siguiente"
                 textButton="Siguiente"
               />

@@ -13,6 +13,7 @@ export default function PropertyCard({ p }: { p: Property }) {
     <Link
       href={`/properties/${p.id}`}
       className="group rounded-2xl border overflow-hidden hover:shadow-lg transition"
+      data-testid="property-card"
     >
       {mainImage && (
         <img
