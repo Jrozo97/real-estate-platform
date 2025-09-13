@@ -1,7 +1,7 @@
 // src/modules/properties/components/PropertyCardSkeleton.tsx
 "use client";
 
-export function PropertyCardSkeleton() {
+export default function PropertyCardSkeleton() {
   return (
     <div className="rounded-xl border bg-white p-3">
       <div className="aspect-[4/3] w-full rounded-lg bg-slate-100 animate-pulse" />

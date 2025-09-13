@@ -1,16 +1,6 @@
-import PropertyClient from "@/components/PropertyClient/PropertyClient";
-import SearchFilters from "@/components/SearchFilters/SearchFilters";
-import { qk } from "@/lib/queryKeys";
-import { fetchProperties } from "@/modules/properties/api";
-import { useProperties } from "@/modules/properties/hooks";
-import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
-import Image from "next/image";
-import { useMemo } from "react";
+import PropertyClient from "@/modules/properties/components/PropertyClient/PropertyClient";
 
 export default async function Home() {
-
-
-
   return (
     <div className="font-sans items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <h1 className="text-4xl font-semibold text-black">Real estate</h1>

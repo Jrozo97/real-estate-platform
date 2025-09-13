@@ -1,4 +1,4 @@
-import PropertyDetailClient from '@/components/PropertyDetail/PropertyDetail';
+import PropertyDetailClient from '@/modules/properties/components/PropertyDetail/PropertyDetail';
 import React from 'react'
 
 

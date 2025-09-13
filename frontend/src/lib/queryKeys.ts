@@ -1,5 +1,5 @@
 // queryKeys.ts
-import type { ListParams } from "@/types/properties";
+import type { ListParams } from "@/modules/properties/types/properties";
 
 type ListKeyParams = ListParams & { mode?: "get" | "post" };
 

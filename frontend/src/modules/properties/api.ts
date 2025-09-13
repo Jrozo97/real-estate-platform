@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios';
-import { ListParams, Paginated, Property } from '@/types/properties';
+import { ListParams, Paginated, Property } from '@/modules/properties/types/properties';
 
 
 export async function fetchPropertiesGet(params: ListParams) {

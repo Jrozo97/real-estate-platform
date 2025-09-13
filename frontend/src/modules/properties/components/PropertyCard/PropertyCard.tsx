@@ -1,6 +1,6 @@
 'use client';
 
-import { Property } from '@/types/properties';
+import { Property } from '@/modules/properties/types/properties';
 import Link from 'next/link';
 
 

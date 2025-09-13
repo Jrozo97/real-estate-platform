@@ -12,7 +12,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "../ui/pagination";
+} from "../../../../components/ui/pagination";
 import EmptyState from "@/modules/properties/components/EmptyState/EmptyState";
 import { PropertyCardSkeleton } from "@/modules/properties/components/PropertyCardSkeleton/PropertyCardSkeleton";
 

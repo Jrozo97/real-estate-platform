@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { qk } from '@/lib/queryKeys';
 import { fetchPropertiesGet, fetchPropertiesPost, fetchPropertyById } from './api';
-import type { ListParams } from '@/types/properties';
+import type { ListParams } from '@/modules/properties/types/properties';
 
 
 export function useProperties(params: ListParams, mode: 'get' | 'post' = 'post') {
