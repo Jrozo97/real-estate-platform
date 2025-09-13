@@ -7,7 +7,7 @@ namespace RealEstate.Domain.Entities;
 [BsonIgnoreExtraElements]
 public sealed class PropertyImage
 {
-    [BsonElement("id")] public string Id { get; init; } = default!;
-    [BsonElement("file")] public string File { get; init; } = default!;
-    [BsonElement("enabled")] public bool Enabled { get; init; }
+    [BsonElement("id")] public string Id { get; set; } = default!;
+    [BsonElement("file")] public string File { get; set; } = default!;
+    [BsonElement("enabled")] public bool Enabled { get; set; } 
 }

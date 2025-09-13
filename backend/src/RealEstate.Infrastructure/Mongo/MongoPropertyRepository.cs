@@ -1,5 +1,4 @@
 // Infrastructure/Mongo/MongoPropertyRepository.cs
-using MongoDB.Bson;
 using MongoDB.Driver;
 using RealEstate.Application.Abstractions;
 using RealEstate.Domain.Entities;
@@ -19,20 +18,19 @@ public sealed class MongoPropertyRepository : IPropertyRepository
         var filter = builder.Empty;
 
         if (!string.IsNullOrWhiteSpace(f.Name))
-            filter &= builder.Regex(p => p.Name, new BsonRegularExpression(f.Name, "i"));
+            filter &= builder.Regex(p => p.Name, new MongoDB.Bson.BsonRegularExpression(f.Name, "i"));
 
         if (!string.IsNullOrWhiteSpace(f.Address))
-            filter &= builder.Regex(p => p.Address, new BsonRegularExpression(f.Address, "i"));
+            filter &= builder.Regex(p => p.Address, new MongoDB.Bson.BsonRegularExpression(f.Address, "i"));
 
         if (f.MinPrice is not null)
-            filter &= builder.Gte(p => p.Price, (long)f.MinPrice.Value);
+            filter &= builder.Gte(p => p.Price, f.MinPrice.Value); // ← decimal
 
         if (f.MaxPrice is not null)
-            filter &= builder.Lte(p => p.Price, (long)f.MaxPrice.Value);
+            filter &= builder.Lte(p => p.Price, f.MaxPrice.Value); // ← decimal
 
         var query = _col.Find(filter);
 
-        // sort
         if (!string.IsNullOrEmpty(f.Sort))
         {
             var parts = f.Sort.Split(':');
@@ -54,30 +52,10 @@ public sealed class MongoPropertyRepository : IPropertyRepository
         var page = Math.Max(f.Page, 1);
         var size = Math.Clamp(f.PageSize, 1, 100);
 
-        // Para listado no necesitamos todo: proyectamos campos básicos + imágenes
         var items = await query
             .Skip((page - 1) * size)
             .Limit(size)
-            .Project(p => new Property
-            {
-                _id = p._id,
-                Id = p.Id,
-                Name = p.Name,
-                Address = p.Address,
-                Price = p.Price,
-                CodeInternal = p.CodeInternal,
-                Year = p.Year,
-                Images = p.Images,     // para que el front pueda tomar la portada (enabled)
-                Owner = new Owner {   // si necesitas mostrar algo del owner en tarjetas
-                    Id = p.Owner.Id,
-                    Name = p.Owner.Name,
-                    Address = p.Owner.Address,
-                    Photo = p.Owner.Photo,
-                    Birthday = p.Owner.Birthday
-                }
-                // traces no las traemos en el listado; llegarán en el detalle
-            })
-            .ToListAsync(ct);
+            .ToListAsync(ct); // ← sin Project
 
         return new PagedResult<Property>(items, total, page, size);
     }
@@ -85,28 +63,24 @@ public sealed class MongoPropertyRepository : IPropertyRepository
     public Task<Property?> GetByIdAsync(string id, CancellationToken ct)
         => _col.Find(p => p.Id == id).FirstOrDefaultAsync(ct)!;
 
+    // (Si no usas estos métodos, puedes eliminarlos para evitar duplicidad)
     public async Task<PagedResult<Property>> SearchAsync(
-        string? name,
-        string? address,
-        long? minPrice,
-        long? maxPrice,
-        int page,
-        int pageSize)
+        string? name, string? address, long? minPrice, long? maxPrice, int page, int pageSize)
     {
         var builder = Builders<Property>.Filter;
         var filter = builder.Empty;
 
         if (!string.IsNullOrWhiteSpace(name))
-            filter &= builder.Regex(p => p.Name, new BsonRegularExpression(name, "i"));
+            filter &= builder.Regex(p => p.Name, new MongoDB.Bson.BsonRegularExpression(name, "i"));
 
         if (!string.IsNullOrWhiteSpace(address))
-            filter &= builder.Regex(p => p.Address, new BsonRegularExpression(address, "i"));
+            filter &= builder.Regex(p => p.Address, new MongoDB.Bson.BsonRegularExpression(address, "i"));
 
         if (minPrice is not null)
-            filter &= builder.Gte(p => p.Price, minPrice.Value);
+            filter &= builder.Gte(p => p.Price, (decimal)minPrice.Value);
 
         if (maxPrice is not null)
-            filter &= builder.Lte(p => p.Price, maxPrice.Value);
+            filter &= builder.Lte(p => p.Price, (decimal)maxPrice.Value);
 
         var query = _col.Find(filter);
 
@@ -122,8 +96,6 @@ public sealed class MongoPropertyRepository : IPropertyRepository
         return new PagedResult<Property>(items, total, currentPage, size);
     }
 
-    public async Task<Property?> GetByBusinessIdAsync(string businessId)
-    {
-        return await _col.Find(p => p.CodeInternal == businessId).FirstOrDefaultAsync();
-    }
+    public Task<Property?> GetByBusinessIdAsync(string businessId)
+        => _col.Find(p => p.CodeInternal == businessId).FirstOrDefaultAsync()!;
 }
