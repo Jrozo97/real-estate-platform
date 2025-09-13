@@ -3,11 +3,18 @@
   const MIN_PRICE = 300_000_000;
   const MAX_PRICE = 1_200_000_000;
 
-  // Utilidades
+  // Utilidades mejoradas
   const pad3 = (n) => String(n).padStart(3, "0");
   const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
   const pick = (arr) => arr[randInt(0, arr.length - 1)];
-  const iso = (y, m, d) => ISODate(`${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}T00:00:00Z`);
+  
+  // Función mejorada para fechas válidas
+  const iso = (y, m, d) => {
+    // Asegurar que el día sea válido para el mes
+    const daysInMonth = new Date(y, m, 0).getDate();
+    const validDay = Math.min(d, daysInMonth);
+    return ISODate(`${y}-${String(m).padStart(2,"0")}-${String(validDay).padStart(2,"0")}T00:00:00Z`);
+  };
 
   const cities = ["Bogotá", "Medellín", "Cali", "Barranquilla", "Bucaramanga", "Cartagena", "Manizales", "Pereira", "Ibagué"];
   const streetNames = [
@@ -41,31 +48,64 @@
     const year = randInt(2005, 2024);
 
     const ownerIdx = (i - 1) % ownerNames.length;
-    const ownerId = `O-${100 + ownerIdx}`;
+    const ownerId = `O-${pad3(100 + ownerIdx)}`; // Mejorado: pad3 para consistencia
     const ownerBirthYear = randInt(1975, 1998);
-    const ownerBirth = iso(ownerBirthYear, randInt(1, 12), randInt(1, 28));
+    const ownerBirthMonth = randInt(1, 12);
+    const ownerBirthDay = randInt(1, 28); // Día seguro para cualquier mes
+    const ownerBirth = iso(ownerBirthYear, ownerBirthMonth, ownerBirthDay);
 
-    // Imágenes (3) — alternando enabled
+    // Imágenes (3) — todas habilitadas por defecto, solo algunas deshabilitadas ocasionalmente
     const images = [
-      { id: `PI-${pad3(i)}-1`, file: `https://picsum.photos/seed/${id.toLowerCase()}a/800/600`, enabled: true },
-      { id: `PI-${pad3(i)}-2`, file: `https://picsum.photos/seed/${id.toLowerCase()}b/800/600`, enabled: i % 3 !== 0 },
-      { id: `PI-${pad3(i)}-3`, file: `https://picsum.photos/seed/${id.toLowerCase()}c/800/600`, enabled: true }
+      { 
+        id: `PI-${pad3(i)}-1`, 
+        file: `https://picsum.photos/seed/${id.toLowerCase()}a/800/600`, 
+        enabled: true 
+      },
+      { 
+        id: `PI-${pad3(i)}-2`, 
+        file: `https://picsum.photos/seed/${id.toLowerCase()}b/800/600`, 
+        enabled: randInt(1, 100) > 15 // 85% probabilidad de estar habilitada
+      },
+      { 
+        id: `PI-${pad3(i)}-3`, 
+        file: `https://picsum.photos/seed/${id.toLowerCase()}c/800/600`, 
+        enabled: true 
+      }
     ];
 
-    // Trazas (2) — una compra y un reavalúo
+    // Trazas (2) — una compra y un reavalúo con fechas válidas
     const saleYear1 = Math.max(2015, randInt(year - 3, year - 1));
-    const saleYear2 = randInt(Math.max(year, 2018), 2025);
+    const saleYear2 = randInt(Math.max(year, 2018), 2024); // Cambiado a 2024 para evitar fechas futuras
+    
     const value1 = Math.round(basePrice * (0.85 + Math.random() * 0.1)); // 85%–95%
     const value2 = Math.round(basePrice * (1.02 + Math.random() * 0.12)); // 102%–114%
+    
     const traces = [
-      { id: `T-${pad3(i)}-1`, dateSale: iso(saleYear1, randInt(1,12), randInt(1,28)), name: "Compra",   value: value1, tax: 0.04 },
-      { id: `T-${pad3(i)}-2`, dateSale: iso(saleYear2, randInt(1,12), randInt(1,28)), name: "Reavalúo", value: value2, tax: 0.00 }
+      { 
+        id: `T-${pad3(i)}-1`, 
+        dateSale: iso(saleYear1, randInt(1,12), randInt(1,28)), 
+        name: "Compra",   
+        value: value1, 
+        tax: 0.04 
+      },
+      { 
+        id: `T-${pad3(i)}-2`, 
+        dateSale: iso(saleYear2, randInt(1,12), randInt(1,28)), 
+        name: "Reavalúo", 
+        value: value2, 
+        tax: 0.00 
+      }
     ];
 
-    docs.push({
+    // Generar nombre de propiedad más consistente
+    const propertyTypes = ["Casa", "Apto", "Lote", "Dúplex", "Penthouse", "Oficina", "Bodega"];
+    const neighborhoods = ["San Martín","Chapinero Alto","Laureles","El Prado","Alameda","Santa Bárbara","San Antonio","El Poblado","Teusaquillo"];
+    const propertyName = `${pick(propertyTypes)} ${pick(neighborhoods)}`;
+
+    // Validar que todos los campos requeridos estén presentes
+    const doc = {
       id,
-      name: pick(["Casa", "Apto", "Lote", "Dúplex", "Penthouse", "Oficina", "Bodega"]) + " " +
-            pick(["San Martín","Chapinero Alto","Laureles","El Prado","Alameda","Santa Bárbara","San Antonio","El Poblado","Teusaquillo"]),
+      name: propertyName,
       address,
       price: basePrice,
       codeInternal,
@@ -74,14 +114,38 @@
         id: ownerId,
         name: ownerNames[ownerIdx],
         address: city,
-        photo: `https://picsum.photos/seed/owner${100 + ownerIdx}/200/200`,
+        photo: `https://picsum.photos/seed/owner${pad3(100 + ownerIdx)}/200/200`,
         birthday: ownerBirth
       },
       images,
       traces
-    });
+    };
+
+    // Validación opcional para debug
+    if (!doc.id || !doc.name || !doc.address || !doc.price) {
+      print(`⚠️ Documento ${i} tiene campos faltantes:`, JSON.stringify(doc, null, 2));
+    }
+
+    docs.push(doc);
   }
 
   const res = db.properties.insertMany(docs);
-  print(`Insertados: ${res.insertedCount || Object.keys(res.insertedIds).length} documentos en 'properties' de '${db.getName()}'.`);
+  const insertedCount = res.insertedCount || Object.keys(res.insertedIds || {}).length;
+  
+  print(`✅ Insertados: ${insertedCount} documentos en 'properties' de '${db.getName()}'.`);
+  
+  // Mostrar estadísticas de muestra
+  const sample = db.properties.findOne();
+  print(`📝 Ejemplo de documento creado:`);
+  print(JSON.stringify(sample, null, 2));
+  
+  // Verificar total de imágenes
+  const totalImages = db.properties.aggregate([
+    { $unwind: "$images" },
+    { $count: "totalImages" }
+  ]).toArray();
+  
+  if (totalImages.length > 0) {
+    print(`📊 Total de imágenes creadas: ${totalImages[0].totalImages}`);
+  }
 })();
