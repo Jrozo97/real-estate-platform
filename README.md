@@ -14,10 +14,16 @@ Aplicación **Full-Stack** para gestión y visualización de propiedades inmobil
 REAL-ESTATE/
 ├── backend/                 # Proyecto Backend en .NET
 │   └── src/
-│       ├── RealEstate.Application   # Lógica de aplicación y casos de uso
-│       ├── RealEstate.Domain        # Entidades y modelos de dominio
-│       ├── RealEstate.Infrastructure # Persistencia (MongoDB)
-│       └── RealEstate.WebApi        # API REST con endpoints
+│       ├── RealEstate.Application     # Lógica de aplicación y casos de uso
+│       ├── RealEstate.Domain          # Entidades y modelos de dominio
+│       ├── RealEstate.Infrastructure  # Persistencia (MongoDB)
+│       └── RealEstate.WebApi          # API REST con endpoints
+│
+│   └── tests/
+│       └── RealEstate.Tests           # Pruebas con NUnit
+│           ├── Entities/              # Tests de entidades (Owner, Property, etc.)
+│           ├── Filters/               # Tests de filtros
+│           └── Repositories/          # Tests de repositorios Mongo
 │
 ├── frontend/                # Proyecto Frontend en Next.js
 │   └── src/
@@ -30,7 +36,6 @@ REAL-ESTATE/
 ├── mongo/                   # Configuración y seed para MongoDB
 │   ├── 01-seed.js           # Script para datos iniciales
 │   └── docker-compose.yml   # Servicios de MongoDB
-│
 ```
 
 ---
@@ -41,6 +46,7 @@ REAL-ESTATE/
 - [.NET 8](https://dotnet.microsoft.com/)
 - ASP.NET Core Web API
 - [MongoDB](https://www.mongodb.com/) con `MongoDB.Driver`
+- NUnit para pruebas unitarias
 - Arquitectura por capas (Application, Domain, Infrastructure, WebApi)
 
 ### Frontend
@@ -105,7 +111,29 @@ http://localhost:3000
 ---
 
 ## 🧪 Tests
-> En progreso (pruebas unitarias y de integración por definir).
+
+### Backend
+El backend cuenta con pruebas unitarias en **NUnit**, organizadas en:
+- `Entities`: validación de entidades (`Owner`, `Property`, `PropertyImage`, `PropertyTrace`).
+- `Filters`: validación de `PropertyFilter`.
+- `Repositories`: pruebas del `MongoPropertyRepository`.
+
+Para correr las pruebas:
+```bash
+cd backend
+dotnet test
+```
+
+Resultado esperado:
+```
+Test Run Successful.
+Total tests: XX
+     Passed: XX
+ Total time: X s
+```
+
+### Frontend
+Próximamente se implementarán pruebas con **Vitest/React Testing Library**.
 
 ---
 
