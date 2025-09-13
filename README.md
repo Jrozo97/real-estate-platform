@@ -33,6 +33,11 @@ REAL-ESTATE/
 │       ├── modules/         # Módulos de negocio (properties, etc.)
 │       └── types/           # Definiciones TypeScript compartidas
 │
+│   └── tests/               # Pruebas del frontend
+│       ├── setup/           # Configuración global (Vitest + MSW)
+│       ├── integration/     # Tests de integración (React Testing Library + MSW)
+│       └── e2e/             # Tests end-to-end (Playwright)
+│
 ├── mongo/                   # Configuración y seed para MongoDB
 │   ├── 01-seed.js           # Script para datos iniciales
 │   └── docker-compose.yml   # Servicios de MongoDB
@@ -55,6 +60,10 @@ REAL-ESTATE/
 - [TypeScript](https://www.typescriptlang.org/)
 - [TailwindCSS](https://tailwindcss.com/)
 - [Shadcn/UI](https://ui.shadcn.com/)
+- [Vitest](https://vitest.dev/) + [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) para tests unitarios/integración
+- [MSW](https://mswjs.io/) para mocks de red en tests
+- [Playwright](https://playwright.dev/) para tests end-to-end
+- Arquitectura **modular basada en features**, donde cada módulo agrupa su UI, lógica de negocio y acceso a datos. Se apoya en capas compartidas (`lib`, `components`) para utilidades y UI global. Esta aproximación facilita la escalabilidad y el mantenimiento, inspirada en conceptos de *Clean Architecture* adaptados a Next.js.
 
 ### DevOps
 - [Docker Compose](https://docs.docker.com/compose/) para levantar MongoDB
@@ -133,7 +142,22 @@ Total tests: XX
 ```
 
 ### Frontend
-Próximamente se implementarán pruebas con **Vitest/React Testing Library**.
+
+#### Tests unitarios e integración (Vitest + React Testing Library)
+Ejecutar:
+```bash
+cd frontend
+pnpm test
+```
+
+#### Tests end-to-end (Playwright)
+Ejecutar:
+```bash
+cd frontend
+pnpm e2e
+```
+
+Esto abrirá los tests E2E simulando la interacción real del usuario (búsqueda, filtros, navegación).
 
 ---
 
