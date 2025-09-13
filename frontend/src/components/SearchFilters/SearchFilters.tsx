@@ -45,8 +45,8 @@ const SearchFilters = ({ onChange }: Props) => {
   };
 
   return (
-    <div className="flex w-full gap-8">
-      <div className="mb-6 w-full relative">
+    <div className="flex w-full  md:flex-row md:gap-8 gap-3 flex-col">
+      <div className="w-full relative">
         <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 text-xl">
           🔍
         </span>
