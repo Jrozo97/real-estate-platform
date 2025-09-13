@@ -14,7 +14,7 @@ import {
   PaginationPrevious,
 } from "../../../../components/ui/pagination";
 import EmptyState from "@/modules/properties/components/EmptyState/EmptyState";
-import { PropertyCardSkeleton } from "@/modules/properties/components/PropertyCardSkeleton/PropertyCardSkeleton";
+import PropertyCardSkeleton from "../PropertyCardSkeleton";
 
 export default function PropertyClient() {
   const [page, setPage] = useState(1);

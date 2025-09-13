@@ -39,11 +39,6 @@ export default function PropertyDetailClient({ id }: { id: string }) {
     );
   }
 
-  const k = (img: { id?: string; file: string }, i: number) =>
-    img.id && img.id !== "null" && img.id !== "undefined"
-      ? img.id
-      : `${i}-${img.file}`;
-
   return (
     <div className="mx-auto max-w-6xl p-4 md:p-6 space-y-6">
       {/* Header / Breadcrumb */}
