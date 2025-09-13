@@ -10,10 +10,11 @@ import {
 } from "../../../../components/ui/popover";
 import { Funnel } from "lucide-react";
 import { currency } from "@/lib/utils";
+
 // Tipos de datos
 export type PropertyFiltersValues = {
   address: string;
-  price: [number, number] | undefined; // [min, max]
+  price: [number, number] | undefined;
 };
 
 type Props = {
@@ -21,7 +22,7 @@ type Props = {
   maxPrice?: number;
   step?: number;
   defaultValues?: Partial<PropertyFiltersValues>;
-  onApply?: (values: PropertyFiltersValues) => void; // ← sólo aplicamos manualmente
+  onApply?: (values: PropertyFiltersValues) => void; 
   className?: string;
 };
 
@@ -48,7 +49,6 @@ export default function PropertyFilters({
   }
 
   function handleApply() {
-    // 👇 sólo mandamos price si existe, si no queda undefined
     onApply?.({
       address,
       price:

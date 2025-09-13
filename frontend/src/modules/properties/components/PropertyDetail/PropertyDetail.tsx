@@ -25,7 +25,6 @@ export default function PropertyDetailClient({ id }: { id: string }) {
     return (
       <div className="mx-auto max-w-3xl p-6">
         <p className="text-red-600 font-medium">
-          {/** @ts-ignore optional chaining por si viene de Axios */}
           Error al cargar la propiedad{" "}
           {error?.message ? `: ${error.message}` : ""}
         </p>
@@ -41,7 +40,7 @@ export default function PropertyDetailClient({ id }: { id: string }) {
 
   return (
     <div className="mx-auto max-w-6xl p-4 md:p-6 space-y-6">
-      {/* Header / Breadcrumb */}
+      {/* Header */}
       <div className="flex items-center gap-3 text-sm">
         <Link href="/" className="text-blue-700 hover:underline flex items-center gap-1">
           <ArrowLeft /> Volver a propiedades
