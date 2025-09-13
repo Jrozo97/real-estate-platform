@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import QueryClientProviderWrapper from "./query-client-provider";
+import QueryClientProviderWrapper from "@/components/QueryClientProvider/QueryClientProvider";
 
 
 export const metadata: Metadata = {

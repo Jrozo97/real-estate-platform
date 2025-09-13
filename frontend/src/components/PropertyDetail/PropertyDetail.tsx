@@ -2,20 +2,13 @@
 
 import { useProperty } from "@/modules/properties/hooks";
 import Link from "next/link";
-import { useRef } from "react";
-import Autoplay from "embla-carousel-autoplay";
 import GalleryWithLightbox from "../GalleryWithLightbox/GalleryWithLightbox";
 import { ArrowLeft } from "lucide-react";
+import { currency } from "@/lib/utils";
 
-const currency = new Intl.NumberFormat("es-CO", {
-  style: "currency",
-  currency: "COP",
-  maximumFractionDigits: 0,
-});
 
 export default function PropertyDetailClient({ id }: { id: string }) {
   const { data, isLoading, isError, error } = useProperty(id);
-  const plugin = useRef(Autoplay({ delay: 2000, stopOnInteraction: true }));
 
   if (isLoading) {
     return (

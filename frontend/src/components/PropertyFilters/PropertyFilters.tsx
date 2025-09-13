@@ -5,6 +5,7 @@ import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Funnel } from 'lucide-react';
+import { currency } from "@/lib/utils";
 // Tipos de datos
 export type PropertyFiltersValues = {
   address: string;
@@ -21,11 +22,7 @@ type Props = {
 };
 
 
-const currency = new Intl.NumberFormat("es-CO", {
-  style: "currency",
-  currency: "COP",
-  maximumFractionDigits: 0,
-});
+
 
 export default function PropertyFilters({
   minPrice = 0,

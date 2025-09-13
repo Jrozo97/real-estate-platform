@@ -39,17 +39,6 @@ export default function PropertyClient() {
   }, [totalPages, page]);
 
 
-
-  const pushURL = (next: typeof params) => {
-    const sp = new URLSearchParams();
-    if (next.page > 1) sp.set("page", String(next.page));
-    if (next.name) sp.set("name", next.name);
-    if (next.address) sp.set("address", next.address);
-    if (typeof next.minPrice === "number") sp.set("min", String(next.minPrice));
-    if (typeof next.maxPrice === "number") sp.set("max", String(next.maxPrice));
-
-  };
-
   const onFiltersChange = (f: { name?: string; address?: string; minPrice?: number; maxPrice?: number }) => {
     const merged = { ...filters, ...f };
     if (!merged.name) delete merged.name;
@@ -59,13 +48,6 @@ export default function PropertyClient() {
 
     setPage(1);
     setFilters(merged);
-    pushURL({
-      page: 1,
-      name: merged.name ?? undefined,
-      address: merged.address ?? undefined,
-      minPrice: merged.minPrice ?? undefined,
-      maxPrice: merged.maxPrice ?? undefined,
-    });
   };
 
   const prev = () => {
@@ -109,8 +91,6 @@ export default function PropertyClient() {
           onReset={() => {
             setFilters({ name: "", address: "", minPrice: undefined, maxPrice: undefined });
             setPage(1);
-            // pushURL si lo usas para sincronizar querystring
-            // pushURL({ page: 1, name: undefined, address: undefined, minPrice: undefined, maxPrice: undefined });
           }}
         />
       ) : (

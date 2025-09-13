@@ -11,9 +11,8 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
-// Tu tipo de imagen
 type Img = { id: string; file: string; enabled?: boolean };
 
 type Props = {
@@ -28,7 +27,7 @@ export default function GalleryWithLightbox({ images, className }: Props) {
   const [active, setActive] = React.useState(0);
   const [api, setApi] = React.useState<CarouselApi>();
 
-  // cuando cambie "active" y el dialog esté abierto, mueve el carrusel
+
   React.useEffect(() => {
     if (open && api) api.scrollTo(active, true);
   }, [open, active, api]);
