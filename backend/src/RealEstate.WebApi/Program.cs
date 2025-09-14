@@ -28,47 +28,13 @@ var frontendUrl = builder.Configuration["FRONTEND_URL"] ??
                   Environment.GetEnvironmentVariable("FRONTEND_URL") ??
                   "http://localhost:3000";
 
-var allowedOrigins = new List<string>();
-
-// Validar y agregar URL principal
-if (!string.IsNullOrEmpty(frontendUrl) &&
-    Uri.IsWellFormedUriString(frontendUrl, UriKind.Absolute))
-{
-    allowedOrigins.Add(frontendUrl);
-
-    // Agregar variante con/sin www si es necesario
-    if (frontendUrl.Contains(".onrender.com") && !frontendUrl.Contains("www."))
-    {
-        var wwwVersion = frontendUrl.Replace("https://", "https://www.");
-        allowedOrigins.Add(wwwVersion);
-    }
-}
-
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        if (allowedOrigins.Any())
-        {
-            policy.WithOrigins(allowedOrigins.ToArray())
-                  .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .AllowCredentials(); // Agregué esto por si usas auth/cookies
-        }
-        else
-        {
-            Console.WriteLine("⚠️ ADVERTENCIA: No hay orígenes CORS válidos configurados");
-            if (builder.Environment.IsDevelopment())
-            {
-                policy.AllowAnyOrigin()
-                      .AllowAnyHeader()
-                      .AllowAnyMethod();
-            }
-            else
-            {
-                throw new InvalidOperationException("No se configuraron orígenes CORS válidos para producción");
-            }
-        }
+        policy.WithOrigins(frontendUrl) // React app
+              .AllowAnyHeader()
+              .AllowAnyMethod();
     });
 });
 
