@@ -4,7 +4,7 @@
     name: my-backend
     plan: free
     rootDir: backend
-    dockerfilePath: ./backend/Dockerfile
+    dockerfilePath: ./Dockerfile
     runtime: docker
     envVars:
       - key: FRONTEND_URL
