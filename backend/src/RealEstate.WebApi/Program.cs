@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using RealEstate.Application.Abstractions;
 using RealEstate.Application.Dto;
 using RealEstate.Domain.Entities;
@@ -22,16 +23,57 @@ builder.Services.AddSingleton<IMongoDatabase>(mongoClient.GetDatabase("realestat
 // DI
 builder.Services.AddScoped<IPropertyRepository, MongoPropertyRepository>();
 
+// CORS Validation
+var frontendUrl = builder.Configuration["FRONTEND_URL"] ??
+                  Environment.GetEnvironmentVariable("FRONTEND_URL") ??
+                  "http://localhost:3000";
+
+var allowedOrigins = new List<string>();
+
+// Validar y agregar URL principal
+if (!string.IsNullOrEmpty(frontendUrl) &&
+    Uri.IsWellFormedUriString(frontendUrl, UriKind.Absolute))
+{
+    allowedOrigins.Add(frontendUrl);
+
+    // Agregar variante con/sin www si es necesario
+    if (frontendUrl.Contains(".onrender.com") && !frontendUrl.Contains("www."))
+    {
+        var wwwVersion = frontendUrl.Replace("https://", "https://www.");
+        allowedOrigins.Add(wwwVersion);
+    }
+}
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
+    options.AddDefaultPolicy(policy =>
     {
-        builder.AllowAnyOrigin()
-               .AllowAnyHeader()
-               .AllowAnyMethod();
+        if (allowedOrigins.Any())
+        {
+            policy.WithOrigins(allowedOrigins.ToArray())
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials(); // Agregué esto por si usas auth/cookies
+        }
+        else
+        {
+            Console.WriteLine("⚠️ ADVERTENCIA: No hay orígenes CORS válidos configurados");
+            if (builder.Environment.IsDevelopment())
+            {
+                policy.AllowAnyOrigin()
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            }
+            else
+            {
+                throw new InvalidOperationException("No se configuraron orígenes CORS válidos para producción");
+            }
+        }
     });
 });
+
+
+
 
 builder.Services.AddProblemDetails();
 var app = builder.Build();
@@ -95,6 +137,18 @@ app.MapGet("/api/properties", async (
     });
 })
 .WithName("GetProperties")
+.Produces(200)
+.ProducesProblem(400);
+
+// GET /api/properties/meta (metadatos: minPrice, maxPrice)
+app.MapGet("/api/properties/meta", async (IMongoDatabase db, CancellationToken ct) =>
+{
+    var col = db.GetCollection<Property>("properties");
+    var min = await col.AsQueryable().Select(p => p.Price).MinAsync(ct);
+    var max = await col.AsQueryable().Select(p => p.Price).MaxAsync(ct);
+    return Results.Ok(new { minPrice = min, maxPrice = max });
+}).
+WithName("GetPropertiesMeta")
 .Produces(200)
 .ProducesProblem(400);
 
