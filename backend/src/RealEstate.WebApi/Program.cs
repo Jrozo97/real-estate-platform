@@ -22,13 +22,16 @@ builder.Services.AddSingleton<IMongoDatabase>(mongoClient.GetDatabase("realestat
 // DI
 builder.Services.AddScoped<IPropertyRepository, MongoPropertyRepository>();
 
-var frontendUrl = builder.Configuration["FRONTEND_URL"] ?? "http://localhost:3000";
 
-builder.Services.AddCors(o =>
-    o.AddDefaultPolicy(p =>
-        p.WithOrigins(frontendUrl)
-         .AllowAnyHeader()
-         .AllowAnyMethod()));
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});
 
 builder.Services.AddProblemDetails();
 var app = builder.Build();
