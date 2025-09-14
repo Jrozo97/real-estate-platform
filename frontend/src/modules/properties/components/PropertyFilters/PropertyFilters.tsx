@@ -39,22 +39,19 @@ export default function PropertyFilters({
   const [price, setPrice] = React.useState<[number, number] | undefined>();
 
   function resetFilters() {
-    const clean = {
+    const clean: PropertyFiltersValues = {
       address: "",
-      price: undefined as [number, number] | undefined,
+      price: [minPrice, maxPrice],
     };
     setAddress(clean.address);
-    setPrice(undefined);
+    setPrice(clean.price);
     onApply?.(clean);
   }
 
   function handleApply() {
     onApply?.({
       address,
-      price:
-        price && !(price[0] === minPrice && price[1] === maxPrice)
-          ? price
-          : undefined,
+      price: price ? price : [minPrice, maxPrice],
     });
   }
 
@@ -94,7 +91,7 @@ export default function PropertyFilters({
             value={price ?? [minPrice, maxPrice]}
             onValueChange={(val) => setPrice([val[0], val[1]])}
             min={minPrice}
-            max={9999999999}
+            max={maxPrice}
             step={step}
             minStepsBetweenThumbs={1}
           />
@@ -102,7 +99,7 @@ export default function PropertyFilters({
           <div className="flex items-center gap-3">
             <Input
               type="number"
-              value={price ? price[0] : ""}
+              value={price ? price[0] : minPrice}
               placeholder={minPrice.toString()}
               onChange={(e) => {
                 const val = Number(e.target.value || 0);
@@ -116,8 +113,8 @@ export default function PropertyFilters({
             />
             <span className="text-muted-foreground">a</span>
             <Input
-              type="number"
-              value={price ? price[1] : ""}
+              // type="number"
+              value={price ? price[1] : maxPrice}
               placeholder={maxPrice.toString()}
               onChange={(e) => {
                 const val = Number(e.target.value);

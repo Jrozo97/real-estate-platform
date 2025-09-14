@@ -1,6 +1,6 @@
 "use client";
 
-import { useProperties } from "@/modules/properties/hooks";
+import { useProperties, usePropertiesMeta } from "@/modules/properties/hooks";
 import { useEffect, useMemo, useState } from "react";
 import SearchFilters from "../SearchFilters/SearchFilters";
 import PropertyCard from "../PropertyCard/PropertyCard";
@@ -65,6 +65,18 @@ export default function PropertyClient() {
     setFilters(merged);
   };
 
+  function getPageItems(
+    current: number,
+    total: number
+  ): Array<number | "ellipsis"> {
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+
+    if (current <= 3) return [1, 2, 3, 4, "ellipsis", total];
+    if (current >= total - 2)
+      return [1, "ellipsis", total - 3, total - 2, total - 1, total];
+    return [1, "ellipsis", current - 1, current, current + 1, "ellipsis", total];
+  }
+
   const prev = () => {
     const p = Math.max(1, page - 1);
     setPage(p);
@@ -81,13 +93,13 @@ export default function PropertyClient() {
   };
 
   const pagesToRender = getPageItems(page, totalPages);
-  const isLoadingGrid = isFetching;
+  const isLoadingGrid = isFetching; 
 
   return (
     <div className="mx-auto max-w-6xl py-4 md:p-6 space-y-5">
       <h1 className="text-2xl font-bold">Propiedades</h1>
 
-      <SearchFilters onChange={onFiltersChange} />
+      <SearchFilters onChange={onFiltersChange}  />
 
       {isLoadingGrid && (
         <div className="flex items-center gap-2 text-sm text-slate-600">
@@ -160,9 +172,8 @@ export default function PropertyClient() {
                   e.preventDefault();
                   prev();
                 }}
-                className={`text-xs py-1.5 ${
-                  page === 1 && "pointer-events-none opacity-50"
-                }`}
+                className={`text-xs py-1.5 ${page === 1 && "pointer-events-none opacity-50"
+                  }`}
                 aria-disabled={page === 1}
                 aria-label="Anterior"
                 textButton="Anterior"
@@ -182,10 +193,9 @@ export default function PropertyClient() {
                       e.preventDefault();
                       goTo(p);
                     }}
-                    className={`text-xs size-auto py-1 px-2 ${
-                      p === page &&
+                    className={`text-xs size-auto py-1 px-2 ${p === page &&
                       "size-auto py-1 px-2 rounded-[4px] bg-[#F9F9F9] border-[0.5px] border-slate-300"
-                    }`}
+                      }`}
                   >
                     {p}
                   </PaginationLink>
@@ -200,9 +210,8 @@ export default function PropertyClient() {
                   next();
                 }}
                 aria-disabled={page === totalPages}
-                className={`text-xs py-1.5 ${
-                  page === totalPages && "pointer-events-none opacity-50"
-                }`}
+                className={`text-xs py-1.5 ${page === totalPages && "pointer-events-none opacity-50"
+                  }`}
                 aria-label="Siguiente"
                 textButton="Siguiente"
               />
@@ -214,14 +223,3 @@ export default function PropertyClient() {
   );
 }
 
-function getPageItems(
-  current: number,
-  total: number
-): Array<number | "ellipsis"> {
-  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
-
-  if (current <= 3) return [1, 2, 3, 4, "ellipsis", total];
-  if (current >= total - 2)
-    return [1, "ellipsis", total - 3, total - 2, total - 1, total];
-  return [1, "ellipsis", current - 1, current, current + 1, "ellipsis", total];
-}

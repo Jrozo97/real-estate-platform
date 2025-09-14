@@ -7,6 +7,7 @@ import PropertyFilters, {
 } from "../PropertyFilters/PropertyFilters";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Search } from "lucide-react";
+import { usePropertiesMeta } from "../../hooks";
 
 type Props = {
   onChange: (f: {
@@ -23,7 +24,10 @@ const SearchFilters = ({ onChange }: Props) => {
     address: "",
     price: [0, 100_000_000],
   });
-
+  const { data: meta, isLoading } = usePropertiesMeta();
+  console.log("data meta", meta);
+  const minPrice = meta?.minPrice ?? 0;
+  const maxPrice = meta?.maxPrice ?? 1000000;
   const debouncedName = useDebounce(name, 300);
 
   useEffect(() => {
@@ -38,18 +42,13 @@ const SearchFilters = ({ onChange }: Props) => {
       minPrice: v.price ? v.price[0] : undefined,
       maxPrice: v.price ? v.price[1] : undefined,
     });
-    console.log("[SearchFilters] apply -> parent onChange", {
-      address: v.address,
-      min,
-      max,
-    });
   };
 
   return (
     <div className="flex w-full  md:flex-row md:gap-8 gap-3 flex-col">
       <div className="w-full relative">
         <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 text-xl">
-          <Search className="text-blue-900"/>
+          <Search className="text-blue-900" />
         </span>
         <Input
           placeholder="Busca tu propiedad..."
@@ -64,8 +63,8 @@ const SearchFilters = ({ onChange }: Props) => {
       </div>
 
       <PropertyFilters
-        minPrice={0}
-        maxPrice={300_000_000}
+        minPrice={minPrice}
+        maxPrice={maxPrice}
         step={1_000_000}
         defaultValues={filters}
         onApply={handlePopoverApply}

@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios';
-import { ListParams, Paginated, Property } from '@/modules/properties/types/properties';
+import { ListParams, Paginated, PropertiesMeta, Property } from '@/modules/properties/types/properties';
 
 
 export async function fetchPropertiesGet(params: ListParams) {
@@ -35,5 +35,10 @@ export async function fetchPropertiesPost(params: ListParams) {
 
 export async function fetchPropertyById(id: string) {
   const res = await api.get<Property>(`/api/properties/${id}`);
+  return res.data;
+}
+
+export async function fetchPropertiesMeta() {
+  const res = await api.get<PropertiesMeta>('/api/properties/meta');
   return res.data;
 }

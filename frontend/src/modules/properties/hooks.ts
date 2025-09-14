@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { qk } from '@/lib/queryKeys';
-import { fetchPropertiesGet, fetchPropertiesPost, fetchPropertyById } from './api';
+import { fetchPropertiesGet, fetchPropertiesMeta, fetchPropertiesPost, fetchPropertyById } from './api';
 import type { ListParams } from '@/modules/properties/types/properties';
 
 
@@ -27,5 +27,14 @@ export function useProperty(id: string) {
     queryFn: () => fetchPropertyById(id),
     enabled: !!id,
     staleTime: 10 * 60 * 1000,
+  });
+}
+
+
+export function usePropertiesMeta() {
+  return useQuery({
+    queryKey: qk.properties.meta(),
+    queryFn: () => fetchPropertiesMeta(),
+    staleTime: 60 * 60 * 1000,
   });
 }

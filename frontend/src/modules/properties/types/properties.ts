@@ -49,3 +49,7 @@ export type Trace = {
   tax: number;
 };
 
+export type PropertiesMeta = {
+  minPrice: number;
+  maxPrice: number;
+};

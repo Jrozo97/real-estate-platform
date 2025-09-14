@@ -10,5 +10,6 @@ export const qk = {
       [...qk.properties.all, "list", params] as const,
     detail: (id: string) =>
       [...qk.properties.all, "detail", id] as const,
+    meta: () => [...qk.properties.all, "meta"] as const,
   },
 };
