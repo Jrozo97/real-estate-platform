@@ -9,7 +9,10 @@
     startCommand: "dotnet out/RealEstate.WebApi.dll"
     envVars:
       - key: FRONTEND_URL
-        sync: false  # Se configura en el dashboard de Render
+        fromService:
+          type: web
+          name: my-frontend
+          property: hostUrl
       - key: MONGO_URI
         sync: false  # Se configura en el dashboard de Render
 
@@ -23,4 +26,7 @@
     startCommand: "npm start"
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        sync: false  # Se configura en el dashboard de Render
+        fromService:
+          type: web
+          name: my-backend
+          property: hostUrl

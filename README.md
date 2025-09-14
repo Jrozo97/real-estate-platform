@@ -163,7 +163,7 @@ Esto abrirá los tests E2E simulando la interacción real del usuario (búsqueda
 
 ## 👨‍💻 Autor
 
-Jimmy Rozo – Frontend Engineer & Fullstack Developer  
+Jimmy Rozo – System Engineer & Frontend Developer  
 📍 Colombia
 
 ---
