@@ -1,22 +1,4 @@
- services:
-  # 🌐 Backend (.NET API)
-  - type: web
-    name: my-backend
-    plan: free
-    rootDir: backend
-    dockerfilePath: ./Dockerfile
-    runtime: docker
-    envVars:
-      - key: FRONTEND_URL
-        value: "https://$(MY_FRONTEND_HOST).onrender.com"
-      - key: MY_FRONTEND_HOST
-        fromService:
-          type: web
-          name: my-frontend
-          property: host
-      - key: MONGO_URI
-        sync: false  # Se configura en el dashboard de Render
-
+services:
   # 🌐 Frontend (Next.js)
   - type: web
     name: my-frontend
@@ -33,4 +15,22 @@
           type: web
           name: my-backend
           property: host
+          
+  # 🌐 Backend (.NET API)
+  - type: web
+    name: my-backend
+    plan: free
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    runtime: docker
+    envVars:
+      - key: FRONTEND_URL
+        value: "https://$(MY_FRONTEND_HOST).onrender.com"
+      - key: MY_FRONTEND_HOST
+        fromService:
+          type: web
+          name: my-frontend
+          property: host
+      - key: MONGO_URI
+        sync: false # Se configura en el dashboard de Render
 
