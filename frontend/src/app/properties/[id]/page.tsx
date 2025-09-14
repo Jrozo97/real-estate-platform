@@ -2,11 +2,14 @@ import PropertyDetailClient from '@/modules/properties/components/PropertyDetail
 import React from 'react'
 
 
-type Props = { params: { id: string } };
+interface Props {
+  params: Promise<{ id: string }>;
+}
 
-const page = ({ params }: Props) => {
+const page = async ({ params }: Props) => {
+  const { id } = await params;
   return (
-    <PropertyDetailClient id={params.id} />
+    <PropertyDetailClient id={id} />
   )
 }
 
