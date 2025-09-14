@@ -1,21 +1,4 @@
 services:
-  # 🌐 Frontend (Next.js)
-  - type: web
-    name: my-frontend
-    env: node
-    plan: free
-    rootDir: frontend
-    buildCommand: "npm install && npm run build"
-    startCommand: "npm start"
-    envVars:
-      - key: NEXT_PUBLIC_API_URL
-        value: "https://$(MY_BACKEND_HOST).onrender.com"
-      - key: MY_BACKEND_HOST
-        fromService:
-          type: web
-          name: my-backend
-          property: host
-          
   # 🌐 Backend (.NET API)
   - type: web
     name: my-backend
@@ -24,13 +7,29 @@ services:
     dockerfilePath: ./Dockerfile
     runtime: docker
     envVars:
+      # El backend necesita saber el origen del frontend para CORS
       - key: FRONTEND_URL
-        value: "https://$(MY_FRONTEND_HOST).onrender.com"
-      - key: MY_FRONTEND_HOST
         fromService:
           type: web
           name: my-frontend
-          property: host
+          property: url
       - key: MONGO_URI
-        sync: false # Se configura en el dashboard de Render
+        sync: false
 
+  # 🌐 Frontend (Next.js)
+  - type: web
+    name: my-frontend
+    env: node
+    plan: free
+    rootDir: frontend
+    buildCommand: "npm install && npm run build"
+    startCommand: "npm start"
+    dependsOn:           # 👈 asegura que el backend exista antes de build del front
+      - my-backend
+    envVars:
+      # El front necesita la URL del backend ya resuelta
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: my-backend
+          property: url
