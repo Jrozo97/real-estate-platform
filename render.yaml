@@ -4,8 +4,8 @@
     name: my-backend
     plan: free
     rootDir: backend
-    buildCommand: "dotnet publish -c Release -o out"
-    startCommand: "dotnet out/RealEstate.WebApi.dll"
+    dockerfilePath: ./backend/Dockerfile
+    runtime: docker
     envVars:
       - key: FRONTEND_URL
         value: "https://$(MY_FRONTEND_HOST)"
