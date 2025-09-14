@@ -1,0 +1,26 @@
+ services:
+  # 🌐 Backend (.NET API)
+  - type: web
+    name: my-backend
+    env: dotnet
+    plan: free
+    rootDir: backend
+    buildCommand: "dotnet publish -c Release -o out"
+    startCommand: "dotnet out/RealEstate.WebApi.dll"
+    envVars:
+      - key: FRONTEND_URL
+        sync: false  # Se configura en el dashboard de Render
+      - key: MONGO_URI
+        sync: false  # Se configura en el dashboard de Render
+
+  # 🌐 Frontend (Next.js)
+  - type: web
+    name: my-frontend
+    env: node
+    plan: free
+    rootDir: frontend
+    buildCommand: "npm install && npm run build"
+    startCommand: "npm start"
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        sync: false  # Se configura en el dashboard de Render
