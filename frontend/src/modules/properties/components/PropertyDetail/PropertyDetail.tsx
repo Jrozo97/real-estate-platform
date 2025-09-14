@@ -108,15 +108,15 @@ export default function PropertyDetailClient({ id }: { id: string }) {
                 className="rounded-xl border p-4 grid grid-cols-2 gap-y-2 gap-x-3"
               >
                 <div className="text-xs text-slate-500">Fecha</div>
-                <div className="text-sm">
+                <div className="text-sm text-right md:text-left">
                   {new Date(t.dateSale).toLocaleDateString("es-CO")}
                 </div>
 
                 <div className="text-xs text-slate-500">Evento</div>
-                <div className="text-sm">{t.name}</div>
+                <div className="text-sm text-right md:text-left">{t.name}</div>
 
                 <div className="text-xs text-slate-500">Impuesto</div>
-                <div className="text-sm">
+                <div className="text-sm text-right md:text-left">
                   {(t.tax * 100).toFixed(2)}%
                 </div>
 
